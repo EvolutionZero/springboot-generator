@@ -17,35 +17,48 @@ public class App {
 	private static final String DAO_PACKEGE = "com.example.ssm.dao";
 	private static final String MODEL_PACKEGE = "com.example.ssm.model";
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		File material = new File(System.getProperty("user.dir") + "/material");
 		File[] materials = material.listFiles();
 		for (File file : materials) {
 			String name = file.getName().replace(".java", "");
+			String content = FileUtils.readFileToString(file ,"UTF-8");
 			if(name.endsWith("Dao")) {
-				try {
-					generatorDao(name, FileUtils.readFileToString(file ,"UTF-8"));
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				addDaoAnntation(name, content);
 				continue;
 			}
-			generatorService(name);
-			generatorServiceImpl(name);
-			generatorController(name);
+			String idType = getIdType(content);
+			String idName = getIdName(content);
+			generatorService(name, idType);
+			generatorServiceImpl(name, idType);
+			generatorController(name, idType, idName);
 		}
 
 		System.out.println("Hello World!");
 	}
 	
-	private static void generatorService(String model) {
+	private static String getIdType(String content) {
+		String type = "String";
+		String kv = StringUtils.substringBetween(content, "private", ";").trim();
+		String[] kvs = kv.split(" "); 
+		return kvs.length > 0 ? kvs[0] : type;
+	}
+	
+	private static String getIdName(String content) {
+		String name = "id";
+		String kv = StringUtils.substringBetween(content, "private", ";").trim();
+		String[] kvs = kv.split(" "); 
+		return kvs.length > 1 ? kvs[1] : name;
+	}
+	
+	private static void generatorService(String model, String idType) {
 		try {
 			String service = FileUtils.readFileToString(
 					new File(System.getProperty("user.dir") + "/template/TemplateService.java"), "UTF-8");
 			service = service.replace("${model}", model);
 			service = service.replace("${servicePackage}", SERVICE_PACKEGE);
 			service = service.replace("${modelPackage}", MODEL_PACKEGE);
+			service = service.replace("${idType}", idType);
 			
 			String targetPath = System.getProperty("user.dir") + "/generator/" + SERVICE_PACKEGE.replace(".", "/");
 			FileUtils.forceMkdir(new File(targetPath));
@@ -56,7 +69,7 @@ public class App {
 		}
 	}
 	
-	private static void generatorServiceImpl(String model) {
+	private static void generatorServiceImpl(String model, String idType) {
 		try {
 			String service = FileUtils.readFileToString(
 					new File(System.getProperty("user.dir") + "/template/TemplateServiceImpl.java"), "UTF-8");
@@ -65,6 +78,7 @@ public class App {
 			service = service.replace("${daoPackage}", DAO_PACKEGE);
 			service = service.replace("${servicePackage}", SERVICE_PACKEGE);
 			service = service.replace("${modelPackage}", MODEL_PACKEGE);
+			service = service.replace("${idType}", idType);
 			
 			String targetPath = System.getProperty("user.dir") + "/generator/" + SERVICE_PACKEGE.replace(".", "/") + "/impl";
 			FileUtils.forceMkdir(new File(targetPath));
@@ -75,20 +89,22 @@ public class App {
 		}
 	}
 	
-	private static void generatorController(String model) {
+	private static void generatorController(String model, String idType, String idName) {
 		try {
-			String service = FileUtils.readFileToString(
+			String controller = FileUtils.readFileToString(
 					new File(System.getProperty("user.dir") + "/template/TemplateController.java"), "UTF-8");
-			service = service.replace("${model}", model);
-			service = service.replace("${modelParam}", StringUtils.uncapitalize(model));
-			service = service.replace("${daoPackage}", DAO_PACKEGE);
-			service = service.replace("${servicePackage}", SERVICE_PACKEGE);
-			service = service.replace("${modelPackage}", MODEL_PACKEGE);
-			service = service.replace("${controllerPackage}", CONTROLLER_PACKEGE);
+			controller = controller.replace("${model}", model);
+			controller = controller.replace("${modelParam}", StringUtils.uncapitalize(model));
+			controller = controller.replace("${daoPackage}", DAO_PACKEGE);
+			controller = controller.replace("${servicePackage}", SERVICE_PACKEGE);
+			controller = controller.replace("${modelPackage}", MODEL_PACKEGE);
+			controller = controller.replace("${controllerPackage}", CONTROLLER_PACKEGE);
+			controller = controller.replace("${idType}", idType);
+			controller = controller.replace("${idName}", idName);
 			
 			String targetPath = System.getProperty("user.dir") + "/generator/" + CONTROLLER_PACKEGE.replace(".", "/");
 			FileUtils.forceMkdir(new File(targetPath));
-			FileUtils.writeStringToFile(new File(targetPath + "/" + model + "Controller.java"), service, "UTF-8");
+			FileUtils.writeStringToFile(new File(targetPath + "/" + model + "Controller.java"), controller, "UTF-8");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -96,7 +112,7 @@ public class App {
 	}
 	
 	
-	private static void generatorDao(String name, String daoContent) {
+	private static void addDaoAnntation(String name, String daoContent) {
 		try {
 			StringBuilder clazzAnnotation = new StringBuilder();
 			clazzAnnotation.append("@Repository").append("\n");

@@ -26,19 +26,19 @@ public class ${model}Controller {
     @RequestMapping(value = "/update.do")
     @ResponseBody
     public String update(${model} ${modelParam}){
-        return ${modelParam}Service.update(${modelParam}) ? "ok" : "fail";
+        return ${modelParam}Service.updateById(${modelParam}) ? "ok" : "fail";
     }
 
     @RequestMapping(value="/find.do")
     @ResponseBody
-    public ${model} find(@RequestParam(value="id", defaultValue = "0") Long id){
-        return ${modelParam}Service.findById(id);
+    public ${model} find(@RequestParam(value="${idName}", defaultValue = "0") ${idType} ${idName}){
+        return ${modelParam}Service.findById(${idName});
     }
 
     @RequestMapping(value="/delete.do")
     @ResponseBody
-    public String delete(@RequestParam(value="id", defaultValue = "0") Long id){
-        return ${modelParam}Service.delete(id) ? "ok" : "fail";
+    public String delete(@RequestParam(value="${idName}", defaultValue = "0") ${idType} ${idName}){
+        return ${modelParam}Service.deleteById(${idName}) ? "ok" : "fail";
     }
 
 }

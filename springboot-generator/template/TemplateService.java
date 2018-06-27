@@ -6,10 +6,10 @@ public interface ${model}Service {
 	
     boolean save(${model} record);
 
-    boolean delete(Long id);
+    boolean deleteById(${idType} id);
 
-    boolean update(${model} record);
+    boolean updateById(${model} record);
 
-    ${model} findById(Long id);
+    ${model} findById(${idType} id);
     
 }

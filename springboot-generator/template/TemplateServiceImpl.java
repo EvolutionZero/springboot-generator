@@ -20,17 +20,17 @@ public class ${model}ServiceImpl implements ${model}Service {
     }
 
     @Override
-    public boolean delete(Long id){
+    public boolean deleteById(${idType} id){
         return ${modelParam}Dao.delete${model}ByPrimaryKey(id) == 1 ? true : false;
     }
 
     @Override
-    public boolean update(${model} record){
+    public boolean updateById(${model} record){
         return ${modelParam}Dao.update${model}ByPrimaryKeySelective(record) == 1 ? true : false;
     }
 
     @Override
-    public ${model} findById(Long id){
+    public ${model} findById(${idType} id){
         return ${modelParam}Dao.select${model}ByPrimaryKey(id);
     }
     
