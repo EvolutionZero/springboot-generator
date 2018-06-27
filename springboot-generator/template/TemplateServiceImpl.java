@@ -25,7 +25,7 @@ public class ${model}ServiceImpl implements ${model}Service {
     }
 
     @Override
-    public boolean update(User record){
+    public boolean update(${model} record){
         return ${modelParam}Dao.update${model}ByPrimaryKeySelective(record) == 1 ? true : false;
     }
 

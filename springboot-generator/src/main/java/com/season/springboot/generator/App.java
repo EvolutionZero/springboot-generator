@@ -101,15 +101,15 @@ public class App {
 			StringBuilder clazzAnnotation = new StringBuilder();
 			clazzAnnotation.append("@Repository").append("\n");
 			clazzAnnotation.append("@Mapper").append("\n");
-			clazzAnnotation.append("public class");
-			daoContent = daoContent.replace("public class", clazzAnnotation.toString());
+			clazzAnnotation.append("public interface");
+			daoContent = daoContent.replace("public interface", clazzAnnotation.toString());
 			
 			StringBuilder annotationImport = new StringBuilder();
-			annotationImport.append(DAO_PACKEGE).append(";\n");
+			annotationImport.append("package ").append(DAO_PACKEGE).append(";\n");
 			annotationImport.append("import org.apache.ibatis.annotations.Mapper;").append("\n");
 			annotationImport.append("import org.springframework.stereotype.Repository;").append("\n");
 			
-			daoContent.replaceAll(DAO_PACKEGE, annotationImport.toString());
+			daoContent = daoContent.replace("package " + DAO_PACKEGE + ";", annotationImport.toString());
 			
 			String targetPath = System.getProperty("user.dir") + "/generator/" + DAO_PACKEGE.replace(".", "/");
 			FileUtils.forceMkdir(new File(targetPath));

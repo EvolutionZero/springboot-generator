@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-@RequestMapping(value="/user")
+@RequestMapping(value="/${modelParam}")
 public class ${model}Controller {
 
     @Autowired
@@ -20,12 +20,12 @@ public class ${model}Controller {
     @ResponseBody
     public ${model} save(${model} ${modelParam}){
     	${modelParam}Service.save(${modelParam});
-        return user;
+        return ${modelParam};
     }
 
     @RequestMapping(value = "/update.do")
     @ResponseBody
-    public String update(${model} user){
+    public String update(${model} ${modelParam}){
         return ${modelParam}Service.update(${modelParam}) ? "ok" : "fail";
     }
 
@@ -38,7 +38,7 @@ public class ${model}Controller {
     @RequestMapping(value="/delete.do")
     @ResponseBody
     public String delete(@RequestParam(value="id", defaultValue = "0") Long id){
-        return userService.delete(id) ? "ok" : "fail";
+        return ${modelParam}Service.delete(id) ? "ok" : "fail";
     }
 
 }
